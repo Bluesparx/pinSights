@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Review = ({ accessToken }) => {
+const Review = () => {
+    const accessToken = sessionStorage.getItem('accessToken');
     const [review, setReview] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -11,11 +12,17 @@ const Review = ({ accessToken }) => {
             setLoading(true);
             setError('');
 
+            if (!accessToken) {
+                setError('Access token is required.');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await axios.post(`${import.meta.env.VITE_APPWRITE_API_URL}/fetchPins`, {
+                const response = await axios.post(`${import.meta.env.VITE_BACKEND}/fetch`, {
                     accessToken,
                 });
-                setReview(response.data.review);
+                setReview(response);
             } catch (err) {
                 console.error('Error fetching review:', err);
                 setError('Error fetching review. Please try again.');
@@ -33,8 +40,8 @@ const Review = ({ accessToken }) => {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <div>
-            <h2>Your Collective Review</h2>
+        <div className='flex flex-col'>
+            <h2 className='bg-red text-lg'>Here's your Review</h2>
             <p>{review}</p>
         </div>
     );

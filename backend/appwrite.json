@@ -1,8 +1,0 @@
-{
-    "function": {
-        "runtime": "node-18.0",
-        "entrypoint": "index.js",
-        "env": {},
-        "events": []
-    }
-}
