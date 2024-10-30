@@ -56,6 +56,7 @@ const Login = () => {
 
             setAccessToken(access_token);
             sessionStorage.setItem('accessToken', access_token);
+            window.location.href = '/callback';
         } catch (err) {
             console.error('Pinterest OAuth error:', {
                 status: err.response?.status,
