@@ -53,7 +53,7 @@ export const fetchReview = async (req, res) => {
             return res.status(404).json({ error: 'No valid image URLs found' });
         }
 
-        console.log(`Processing ${pinImages.length} images...`);
+        // console.log(`Processing ${pinImages.length} images...`);
 
         const descriptions = await generateImageDescriptions(pinImages, model);
         
@@ -81,8 +81,8 @@ export const fetchReview = async (req, res) => {
         if (!result.response) {
             throw new Error('No response generated from the model');
         }
-        console.log(result.response.text());
-
+        // console.log(result.response.text());
+        console.log("review generated!");
         return res.status(200).json(result.response.text());
 
     } catch (error) {
@@ -107,7 +107,7 @@ const generateImageDescriptions = async (imageUrls, model) => {
 
     for (const url of imageUrls) {
         try {
-            console.log(`Processing image: ${url.substring(0, 50)}...`);
+            // console.log(`Processing image: ${url.substring(0, 50)}...`);
 
             // Fetch the image as binary data
             const response = await axios.get(url, {
@@ -136,7 +136,7 @@ const generateImageDescriptions = async (imageUrls, model) => {
 
             if (result.response) {
                 descriptions.push(result.response.text().trim());
-                console.log('Successfully generated description');
+                // console.log('Successfully generated description');
             } else {
                 console.error('No response from model for image');
             }

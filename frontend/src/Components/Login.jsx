@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import Navbar from './Navbar';
 
 const Login = () => {
     const [accessToken, setAccessToken] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false); 
 
     useEffect(() => {
         const token = sessionStorage.getItem('accessToken');
@@ -32,6 +34,7 @@ const Login = () => {
     };
 
     const exchangeCodeForAccessToken = async (authorizationCode) => {
+        setLoading(true); 
         try {
             const redirectUri = import.meta.env.VITE_PINTEREST_REDIRECT_URI;
 
@@ -69,8 +72,24 @@ const Login = () => {
                     ? err.response.data.message || 'Failed to authenticate. Please try again.'
                     : 'Network error. Please try again.'
             );
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin text-pink-500" />
+                <div className="text-center space-y-2">
+                    <p className="text-lg font-medium text-white">Connecting...</p>
+                    <p className="text-sm text-gray-500">
+                        Please wait while we connect to your Pinterest account.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -79,8 +98,10 @@ const Login = () => {
             <div className='w-full max-w-2xl p-10 rounded-lg border border-white/10 shadow 
                 shadow-red-600 bg-white/20 bg-opacity-30 backdrop-blur-xl text-center'>
                 <h1 className="text-3xl text-white font-bold mb-6 text-center">Pinsights</h1>
+                
                 {error && <p className="text-red-500 mb-4">{error}</p>}
-                <p className='text-l text-gray-100 p-2 mb-2'> Get AI-generated review based on your saves in pinterest.</p>
+                
+                <p className='text-l text-gray-100 p-2 mb-2'>Get AI-generated review based on your saves in Pinterest.</p>
                 <button
                     onClick={handlePinterestAuth}
                     className="bg-red-600 max-w-64 hover:bg-red-700 text-white font-bold py-2 my-3 rounded-full w-full pr-2 pl-2 transition duration-200"

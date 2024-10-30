@@ -4,7 +4,6 @@ import axios from 'axios';
 
 export const oauth = async (req, res) => {
     const { code, redirect_uri } = req.body;
-    console.log(code, redirect_uri);
 
     // Validate the input parameters
     if (!code || !redirect_uri) {
@@ -36,7 +35,7 @@ export const oauth = async (req, res) => {
         params.append('code', code);
         params.append('redirect_uri', redirect_uri);
         
-        console.log('Sending request with parameters:', params.toString());
+        // console.log('Sending request with parameters:', params.toString());
 
         // Auth header
         const clientId = process.env.PINTEREST_CLIENT_ID;
@@ -52,7 +51,7 @@ export const oauth = async (req, res) => {
         const response = await axios.post('https://api.pinterest.com/v5/oauth/token', params.toString(), {
             headers: post_headers
         });
-        console.log(response.data)
+        // console.log(response.data)
         // Extract tokens from the response
         const { access_token, refresh_token, expires_in } = response.data;
 
