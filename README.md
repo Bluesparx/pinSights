@@ -15,16 +15,15 @@ Pin Insights is a web application that allows users to connect their Pinterest a
 
 ### Prerequisites
 
-- Node.js (>= 14.x)
-- Docker (for running Appwrite)
+- Node.js (>= 20.x)
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/pin-insights.git
-   cd pin-insights
+   git clone https://github.com/bluesparx/pinsights.git
+   cd pinsights
 
 2. Install dependencies:
 
