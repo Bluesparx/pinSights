@@ -31,20 +31,11 @@ Pin Insights is a web application that allows users to connect their Pinterest a
     ```bash
     npm install
 
-3. Appwrite backend
+3. Run and backend in different terminals
 
     ```bash
-    docker run -d --init -p 3000:80 \
-    -e _APP_ENV=development \
-    -e _APP_DEBUG=true \
-    -e _APP_DOMAIN=http://localhost:3000 \
-    -e _APP_DOMAIN_TARGET=http://localhost:3000 \
-    -e _APP_INTERNAL_DOMAIN=http://localhost \
-    -e _APP_API_KEY=YOUR_API_KEY_HERE \
-    appwrite/appwrite:latest
+    npm run dev
     ```
 
-4. Start using `npm run dev`
-
-5. Open your browser and navigate to http://localhost:5172.
+4. Open your browser and navigate to http://localhost:5172.
 
