@@ -4,149 +4,136 @@ dotenv.config();
 import axios from 'axios';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import sharp from 'sharp';
+import { HfInference } from "@huggingface/inference";
 
-export const fetchReview = async (req, res) => {
+const HF_API_KEY = process.env.HF_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+const client = new HfInference(HF_API_KEY);
+
+async function queryHuggingFace(imageBuffer) {
     try {
-        console.log("Fetching review...");
-        const accessToken = req.body.accessToken;
-
-        if (!accessToken) {
-            return res.status(400).json({ error: 'Access token is required' });
-        }
-
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-        const pinterestResponse = await axios.get('https://api.pinterest.com/v5/pins', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const pins = pinterestResponse.data.items;
-
-        if (!pins || pins.length === 0) {
-            return res.status(404).json({ error: 'No pins found for this user' });
-        }
-
-        const pinImageUrls = [];
-        for (let i = 0; i < Math.min(pins.length, 50); i++) {
-            try {
-                const pinResponse = await axios.get(`https://api.pinterest.com/v5/pins/${pins[i].id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (pinResponse.data?.media?.images?.['600x']?.url) {
-                    pinImageUrls.push(pinResponse.data.media.images['600x'].url);
-                }
-            } catch (err) {
-                console.error(`Error fetching image URL for pin ${pins[i].id}:`, err.message);
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large",
+            {
+                headers: {
+                    Authorization: `Bearer ${HF_API_KEY}`,
+                    "Content-Type": "application/octet-stream", // Binary data
+                },
+                method: "POST",
+                body: imageBuffer,
             }
-        }
-
-        const pinImages = selectRandomImages(pinImageUrls, 6);
-        if (pinImageUrls.length === 0) {
-            return res.status(404).json({ error: 'No valid image URLs found' });
-        }
-
-        // console.log(`Processing ${pinImages.length} images...`);
-
-        const descriptions = await generateImageDescriptions(pinImages, model);
-        
-        // TEST
-        // descriptions = ['one', 'two']
-        
-        if (descriptions.length === 0) {
-            return res.status(500).json({ error: 'Failed to generate image descriptions' });
-        }
-
-        const prompt = `
-            Based on the following descriptions of a user's pins, provide a creative review to the user about their overall interests, themes, and preferences.
-            descriptions: ${descriptions.join('.')}
-            Your review should be thoughtful, emphasize common themes, and suggest what the user's collection says about their personality. Not more than 150 words.
-        `;
-        // console.log(prompt);
-
-        const result = await model.generateContent(prompt);
-
-        // TEST
-        // const result= {
-        //     response: "helo this is the reuslt"
-        // }
-
-        if (!result.response) {
-            throw new Error('No response generated from the model');
-        }
-        // console.log(result.response.text());
-        console.log("review generated!");
-        return res.status(200).json(result.response.text());
-
+        );
+        return await response.json();
     } catch (error) {
-        console.error('Error in fetchReview:', error);
-        const errorMessage = error.response?.data?.error || error.message || 'Unknown error occurred';
-        return res.status(500).json({ 
-            error: 'Error generating review', 
-            details: errorMessage,
-            timestamp: new Date().toISOString()
-        });
+        console.error("Error querying Hugging Face API:", error.message);
+        return null;
     }
-};
+}
 
 const selectRandomImages = (imageUrls, count) => {
     const shuffled = imageUrls.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 };
 
-
-const generateImageDescriptions = async (imageUrls, model) => {
+const generateImageDescriptions = async (imageUrls) => {
     const descriptions = [];
-
     for (const url of imageUrls) {
         try {
-            // console.log(`Processing image: ${url.substring(0, 50)}...`);
-
-            // Fetch the image as binary data
-            const response = await axios.get(url, {
-                responseType: 'arraybuffer',
-            });
-
-            if (!response.data) {
-                console.error('No data received from image URL');
-                continue;
-            }
-
+            const response = await axios.get(url, { responseType: 'arraybuffer' });
             const imageBuffer = Buffer.from(response.data);
-            const processedImage = await sharp(imageBuffer)
-                .resize(600) 
-                .toBuffer();
 
-            const result = await model.generateContent([
-                "Describe this image in 20 words focussing on theme, sentiment, etc.",
-                {
-                    inlineData: {
-                        data: processedImage.toString('base64'),
-                        mimeType: "image/jpeg",
-                    },
-                },
-            ]);
-
-            if (result.response) {
-                descriptions.push(result.response.text().trim());
-                // console.log('Successfully generated description');
+            const processedImage = await sharp(imageBuffer).resize(600).toBuffer();
+            const result = await queryHuggingFace(processedImage);
+            if (result?.length > 0) {
+                descriptions.push(result[0]?.generated_text?.trim());
             } else {
-                console.error('No response from model for image');
+                console.error("Failed to generate description for an image");
             }
-
         } catch (error) {
-            console.error('Error processing image:', error.message);
+            console.error("Error processing image:", error.message);
         }
     }
-
     return descriptions;
+};
+
+const fetchReview = async (req, res) => {
+    try {
+        console.log("Fetching review...");
+        const { accessToken } = req.body;
+
+        if (!accessToken) {
+            return res.status(400).json({ error: 'Access token is required' });
+        }
+
+        const pinterestResponse = await axios.get('https://api.pinterest.com/v5/pins', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const pins = pinterestResponse.data.items || [];
+        if (pins.length === 0) {
+            return res.status(404).json({ error: 'No pins found for this user' });
+        }
+
+        const pinImageUrls = [];
+
+        for (const pin of pins.slice(0, 50)) {
+            try {
+                const pinResponse = await axios.get(`https://api.pinterest.com/v5/pins/${pin.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const imageUrl = pinResponse.data?.media?.images?.['600x']?.url;
+                if (imageUrl) {
+                    pinImageUrls.push(imageUrl);
+                }
+            } catch (err) {
+                console.error(`Error fetching image for pin ${pin.id}:`, err.message);
+            }
+        }
+
+        const validImageUrls = pinImageUrls.filter(url => url);
+        if (validImageUrls.length === 0) {
+            return res.status(404).json({ error: 'No valid image URLs found' });
+        }
+
+        const selectedImages = selectRandomImages(validImageUrls, 6);
+        const descriptions = await generateImageDescriptions(selectedImages);
+
+        if (descriptions.length === 0) {
+            return res.status(500).json({ error: 'Failed to generate image descriptions' });
+        }
+
+        const prompt = `
+            A user authorised you to evaluate their pins and you found these descriptions. Provide a creative review about their overall persona.
+            Descriptions: ${descriptions.join(". ")}
+            Your review should be thoughtful and cute, not more than 150 words.
+        `;
+
+        const chatCompletion = await client.chatCompletion({
+            model: "microsoft/Phi-3-mini-4k-instruct",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 500,
+            n: 1,
+        });
+
+        const result = chatCompletion.choices[0]?.message.content.trim();
+        if (!result) {
+            return res.status(500).json({ error: 'Failed to generate a review' });
+        }
+
+        console.log("Review generated!");
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error in fetchReview:", error.message);
+        return res.status(500).json({ error: "Error generating review", details: error.message });
+    }
 };
 
 export default fetchReview;

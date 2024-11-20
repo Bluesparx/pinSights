@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrivacyPolicy = () => {
     return (
-        <div className='text-gray-800'>
+        <div className='text-gray-200 px-8 font-[Calibri]'>
             <p className="mb-4">
                 This Privacy Policy explains how our app collects, uses, and discloses your information when you use our services.
             </p>
@@ -29,9 +29,7 @@ const PrivacyPolicy = () => {
                 We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy 
                 on this page.
             </p>
-            <p className="mb-4">
-                If you have any questions about this Privacy Policy, please contact us at naziahassan2288@gmail.com
-            </p>
+            
         </div>
     );
 };

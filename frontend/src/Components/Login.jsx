@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import Footer from './Footer';
 import Navbar from './Navbar';
 import background from '../assets/background.png';
 
@@ -101,26 +102,27 @@ const Login = () => {
                 className="w-full h-screen bg-cover bg-center flex items-center justify-center"
                 style={{ backgroundImage: `url(${background})` }}
             >
-                <div className="w-full max-w-2xl p-10 rounded-lg border border-white/10 shadow 
-                    shadow-white-600 bg-white/20 bg-opacity-30 backdrop-blur-xl text-center">
-                    <h1 className="text-3xl text-white font-bold mb-6 text-center">Pinsights</h1>
+                <div className="w-full max-w-2xl p-10 rounded-xl
+                    bg-black/80 bg-opacity-30 backdrop-blur-xl text-center font-[Ariel]">
+                    <h1 className="text-4xl text-white font-bold mb-6 text-center">Pinsights</h1>
                     
                     {error && <p className="text-red-500 mb-4">{error}</p>}
-                    <p className="text-l text-gray-100 p-2 mb-2">Get AI-generated review based on your saves in Pinterest.</p>
+                    <p className="text-lg text-gray-100 p-2 mb-2">Get AI-generated review based on your saves in Pinterest.</p>
                     <button
                         onClick={handlePinterestAuth}
-                        className="bg-red-600 max-w-64 hover:bg-red-700 text-white font-bold py-2 my-3 rounded-full w-full pr-2 pl-2 transition duration-200"
+                        className="bg-red-600 max-w-64 hover:bg-red-700 text-white font-bold py-2 my-3 font-[Calibri] rounded-full w-full pr-2 pl-2 transition duration-200"
                     >
                         Authorize with Pinterest
                     </button>
 
                     <div className="mt-6">
-                        <p className="text-sm text-gray-100">
+                        <p className="text-md text-gray-100">
                             By logging in, you agree to our <a href="/privacy-policy" className="text-red-600 hover:underline">Privacy Policy</a>
                         </p>
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };

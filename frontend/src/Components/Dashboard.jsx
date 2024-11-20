@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import Footer from './Footer';
 import background from '../assets/background.png';
 
 const Review = () => {
@@ -61,15 +62,16 @@ const Review = () => {
       <div style={backgroundStyle}>
         <Navbar />
         <div className="flex items-center justify-center min-h-screen bg-black/20">
-        <div className="flex flex-col items-center justify-center bg-white rounded-lg p-4 max-w-md w-full">
-          <Loader2 className="h-8 w-8 animate-spin text-pink-700 my-2" />
+        <div className="flex flex-col items-center justify-center bg-black rounded-lg p-4 max-w-md w-full">
+          <Loader2 className="h-8 w-8 animate-spin text-pink-400 my-2" />
           <div className="text-center space-y-2">
-            <p className="text-lg font-medium text-gray-800">Analyzing your Pinterest boards...</p>
-            <p className="text-sm text-gray-700 pb-2">
+            <p className="text-lg font-medium text-white">Analyzing your Pinterest boards...</p>
+            <p className="text-sm text-gray-100 pb-2">
               This may take a few minutes as we process your pins
             </p>
           </div>
         </div>
+        <Footer/>
       </div>
 
       </div>
@@ -81,35 +83,38 @@ const Review = () => {
       <div style={backgroundStyle}>
         <Navbar />
         <div className="flex items-center justify-center min-h-screen bg-black/20">
-        <div className="flex flex-col items-center justify-center my-4 bg-white border rounded-lg p-4 max-w-md w-full">
-            <h3 className="text-gray-700 font-medium">Error analysing pins. Please try again later</h3>
+        <div className="flex flex-col items-center justify-center my-4 bg-black/80 rounded-lg p-4 max-w-md w-full">
+            <h3 className="text-gray-100 font-medium">Error analysing pins. Please try again later</h3>
         </div>
         </div>
+        <Footer/>
       </div>
     );
   }
 
+  // const testreview = "hi Lorem ipsum dolor, sit amet consectetur adipisicing elit. Officia aperiam fuga eius odio animi sint pariatur! Dolorum error, sit laboriosam maiores quas voluptatibus aliquid est aut corporis vel amet quisquam. Incidunt, et! Maiores quibusdam neque alias praesentium, architecto minima molestias atque perferendis consequatur omnis quia consequuntur illum possimus dignissimos? Praesentium, minus in. Qui corporis a vero minima consectetur. Molestiae assumenda esse placeat facilis incidunt? Omnis ullam, doloribus est veniam magnam ipsum dicta ad natus nobis inventore nisi? Nisi, veniam adipisci sint ipsum officia pariatur harum asperiores tempore a vero voluptates, nostrum aperiam iusto ab necessitatibus, debitis illo autem mollitia reprehenderit!"
   return (
     <>
-      <div style={backgroundStyle}>
-        <div className="mx-auto p-6">
-          <div className="bg-white/30 backdrop-blur-sm rounded-lg shadow-lg overflow-hidden">
+      <Navbar/>
+      <div style={backgroundStyle} className="flex items-center justify-center min-h-screen">
+        <div className="mx-auto p-6 max-w-2xl">
+          <div className="bg-black/80 backdrop-blur-lg rounded-lg overflow-hidden">
             <div className="bg-gradient-to-r from-red-500/50 to-pink-600/50 p-4">
-              <h2 className="text-white text-xl font-semibold text-center">
+              <h2 className="text-white text-2xl font-semibold text-center font-[Ariel]">
                 Your Pinterest Analysis
               </h2>
             </div>
 
             <div className="p-6">
               {review ? (
-                <div className="prose prose-pink max-w-none">
-                  <p className="text-white leading-relaxed whitespace-pre-line">
+                <div className="max-w-none">
+                  <p className="text-gray-100 p-2 leading-relaxed whitespace-pre-line font-[Ariel] text-lg">
                     {review}
                   </p>
                 </div>
               ) : (
-                <div className="flex flex-col items-center">
-                  <p className="text-white text-center italic mb-4">
+                <div className="flex flex-col items-center mx-4 p-2">
+                  <p className="text-gray-100 text-center italic mb-4 mx-4 font-[Ariel]">
                     Please login to get review.
                   </p>
                   <Link
@@ -123,6 +128,7 @@ const Review = () => {
             </div>
           </div>
         </div>
+        <Footer/>
       </div>
     </>
   );
