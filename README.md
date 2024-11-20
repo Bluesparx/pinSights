@@ -15,36 +15,26 @@ Pin Insights is a web application that allows users to connect their Pinterest a
 
 ### Prerequisites
 
-- Node.js (>= 14.x)
-- Docker (for running Appwrite)
+- Node.js (>= 20.x)
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/pin-insights.git
-   cd pin-insights
+   git clone https://github.com/bluesparx/pinsights.git
+   cd pinsights
 
 2. Install dependencies:
 
     ```bash
     npm install
 
-3. Appwrite backend
+3. Run and backend in different terminals
 
     ```bash
-    docker run -d --init -p 3000:80 \
-    -e _APP_ENV=development \
-    -e _APP_DEBUG=true \
-    -e _APP_DOMAIN=http://localhost:3000 \
-    -e _APP_DOMAIN_TARGET=http://localhost:3000 \
-    -e _APP_INTERNAL_DOMAIN=http://localhost \
-    -e _APP_API_KEY=YOUR_API_KEY_HERE \
-    appwrite/appwrite:latest
+    npm run dev
     ```
 
-4. Start using `npm run dev`
-
-5. Open your browser and navigate to http://localhost:5172.
+4. Open your browser and navigate to http://localhost:5172.
 
