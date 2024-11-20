@@ -2,18 +2,17 @@ import React from 'react';
 
 const PrivacyPolicy = () => {
     return (
-        <div>
+        <div className='text-gray-800'>
             <p className="mb-4">
                 This Privacy Policy explains how our app collects, uses, and discloses your information when you use our services.
             </p>
             <h2 className="text-xl font-semibold mt-4">Information We Collect</h2>
             <p className="mb-4">
-                We collect information you provide directly to us, such as when you create an account, log in, or interact with our services.
+                We collect information you provide directly to us, such as when you authorize your account we get access to your - pinterest saves, account information, etc. to interact with our services.
             </p>
             <h2 className="text-xl font-semibold mt-4">How We Use Your Information</h2>
             <p className="mb-4">
-                We use the information we collect for various purposes, including to provide, maintain, and improve our services, 
-                communicate with you, and respond to your inquiries.
+                We use the information of your pinterest saves to generate and provide you the review, that's all we do.
             </p>
             <h2 className="text-xl font-semibold mt-4">Data Sharing</h2>
             <p className="mb-4">
